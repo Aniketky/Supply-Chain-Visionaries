@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shipment Status Checker</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.js"></script>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl p-6">
+        <h1 class="text-2xl font-bold mb-4">Shipment Status Checker</h1>
+        <form id="shipmentForm" class="space-y-4">
+            <div>
+                <label for="temperature" class="block text-sm font-medium text-gray-700">Temperature:</label>
+                <input type="number" id="temperature" name="temperature" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+            </div>
+            <div>
+                <label for="humidity" class="block text-sm font-medium text-gray-700">Humidity:</label>
+                <input type="number" id="humidity" name="humidity" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+            </div>
+            <div>
+                <label for="vibration" class="block text-sm font-medium text-gray-700">Vibration:</label>
+                <input type="number" id="vibration" name="vibration" step="0.1" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+            </div>
+            <div>
+                <label for="productType" class="block text-sm font-medium text-gray-700">Product Type:</label>
+                <select id="productType" name="productType" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                    <option value="Food">Food</option>
+                    <option value="Electronics">Electronics</option>
+                    <option value="Pharmaceuticals">Pharmaceuticals</option>
+                </select>
+            </div>
+            <div>
+                <label for="transportMode" class="block text-sm font-medium text-gray-700">Transport Mode:</label>
+                <select id="transportMode" name="transportMode" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                    <option value="Truck">Truck</option>
+                    <option value="Ship">Ship</option>
+                    <option value="Airplane">Airplane</option>
+                </select>
+            </div>
+            <div>
+                <label for="daysInTransit" class="block text-sm font-medium text-gray-700">Days in Transit:</label>
+                <input type="number" id="daysInTransit" name="daysInTransit" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+            </div>
+            <button type="submit" class="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                Check Status
+            </button>
+        </form>
+        <div id="result" class="mt-4 p-4 bg-gray-100 rounded-md">
+            <h2 class="text-lg font-semibold mb-2">Result:</h2>
+            <p id="productStatus" class="text-lg"></p>
+        </div>
+        <div id="debug" class="mt-4 p-4 bg-yellow-100 rounded-md">
+            <h2 class="text-lg font-semibold mb-2">Debug Information:</h2>
+            <pre id="debugInfo" class="whitespace-pre-wrap"></pre>
+        </div>
+    </div>
+
+    <script>
+        function checkProductStatus(productType, temperature, humidity, vibration, transportMode, daysInTransit) {
+            console.log("Function called with:", { productType, temperature, humidity, vibration, transportMode, daysInTransit });
+            
+            if (productType === "Food") {
+                if (temperature > 30 || humidity > 70 || vibration > 3.5 || daysInTransit > 5) {
+                    return "Spoiled";
+                }
+            } else if (productType === "Electronics") {
+                if (humidity > 80 || vibration > 4.0) {
+                    return "Damaged";
+                }
+            } else if (productType === "Pharmaceuticals") {
+                if (temperature < 2 || temperature > 30 || daysInTransit > 7) {
+                    return "Expired";
+                }
+            }
+            return "Good";
+        }
+
+        document.getElementById('shipmentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            console.log("Form submitted");
+            
+            const temperature = parseFloat(document.getElementById('temperature').value);
+            const humidity = parseFloat(document.getElementById('humidity').value);
+            const vibration = parseFloat(document.getElementById('vibration').value);
+            const productType = document.getElementById('productType').value;
+            const transportMode = document.getElementById('transportMode').value;
+            const daysInTransit = parseInt(document.getElementById('daysInTransit').value);
+
+            const debugInfo = {
+                temperature,
+                humidity,
+                vibration,
+                productType,
+                transportMode,
+                daysInTransit
+            };
+            console.log("Input values:", debugInfo);
+            
+            document.getElementById('debugInfo').textContent = JSON.stringify(debugInfo, null, 2);
+
+            const status = checkProductStatus(productType, temperature, humidity, vibration, transportMode, daysInTransit);
+            console.log("Calculated status:", status);
+
+            document.getElementById('productStatus').textContent = `Product Status: ${status}`;
+            document.getElementById('result').style.display = 'block';
+        });
+    </script>
+</body>
+</html>

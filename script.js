@@ -1,4 +1,3 @@
-// Flowchart data
 const timelineData = [
     { id: 'start', label: 'START', description: 'Beginning of the supply chain process' },
     { id: 'productRegistration', label: 'Product Registration', description: 'Register the product in the blockchain network' },
@@ -15,11 +14,11 @@ const timelineData = [
 const timelineContainer = document.querySelector('.timeline-container');
 
 // Create timeline nodes
-timelineData.forEach((item) => {
+timelineData.forEach((item, index) => {
     const node = document.createElement('div');
     node.classList.add('timeline-node');
     node.id = item.id;
-    node.innerHTML = `<h3>${item.label}</h3><p>${item.description}</p>`;
+    node.innerHTML = `<h3>${item.label}</h3\><p>${item.description}</p>`;
     timelineContainer.appendChild(node);
 });
 
@@ -31,7 +30,7 @@ timelineContainer.appendChild(timelineLine);
 // Animation (using GSAP)
 gsap.registerPlugin(ScrollTrigger);
 
-gsap.utils.toArray('.timeline-node').forEach((node) => {
+gsap.utils.toArray('.timeline-node').forEach((node, index) => {
     gsap.to(node, {
         opacity: 1,
         duration: 0.5,
@@ -45,6 +44,7 @@ gsap.utils.toArray('.timeline-node').forEach((node) => {
 });
 
 // Smart Contract Interaction
+
 let web3;
 let contract;
 let reputationContract;
@@ -152,7 +152,6 @@ async function connectWallet() {
         alert("Please install MetaMask!");
     }
 }
-
 function updateWalletStatusElements(message) {
     const walletStatusIds = ['wallet-status', 'wallet-status-smart-contracts', 'wallet-status-supply-chain'];
     walletStatusIds.forEach(id => {
@@ -161,8 +160,7 @@ function updateWalletStatusElements(message) {
         element.textContent = message;
       }
     });
-}
-
+  }
 // Deposit advance payment
 async function depositAdvance() {
     if (!checkWalletConnection()) return;
@@ -287,21 +285,22 @@ function updateJobList() {
     const jobList = document.getElementById('job-list');
     jobList.innerHTML = ''; // Clear the existing list
     jobs.forEach(job => {
+        // Only show jobs that are not posted by the current user and are available
+       // if (job.shipper !== account && job.status === 'available') { 
         const jobElement = document.createElement('div');
         jobElement.className = 'job-item';
     
-        // Use template literals for better readability
-        let htmlContent = `
-            <p><strong>Description:</strong> ${job.description}</p>
-            <p><strong>Price:</strong> ${job.price} ETH</p>
-            <p><strong>Shipper:</strong> ${job.shipper}</p>
-            <button onclick="acceptJob(${job.id})">Accept Job</button>
-        `;
+        // Use string concatenation to build the HTML content
+        let htmlContent = '<p><strong>Description:</strong> ' + job.description + '</p>';
+        htmlContent += '<p><strong>Price:</strong> ' + job.price + ' ETH</p>';
+        htmlContent += '<p><strong>Shipper:</strong> ' + job.shipper + '</p>';
+        htmlContent += '<button onclick="acceptJob(' + job.id + ')">Accept Job</button>';
     
         jobElement.innerHTML = htmlContent;
         jobList.appendChild(jobElement);
-    });
-}  
+      });
+    }  
+
 
 // Accept a job
 function acceptJob(jobId) {
@@ -416,9 +415,6 @@ function updateShipmentStatus() {
 }
 
 // Track shipment
-// ... (previous code remains the same)
-
-// Track shipment
 function trackShipment() {
     const shipmentId = document.getElementById('track-shipment-select').value;
     const statusDiv = document.getElementById('shipment-status');
@@ -426,12 +422,10 @@ function trackShipment() {
 
     const shipment = shipments.find(s => s.id === shipmentId);
     if (shipment) {
-        statusDiv.innerHTML = `
-            <h4>Shipment ${shipmentId}</h4>
-            <p><strong>Origin:</strong> ${shipment.origin}</p>
-            <p><strong>Destination:</strong> ${shipment.destination}</p>
-            <h4>Status Updates:</h4>
-        `;
+        statusDiv.innerHTML = `<h4>Shipment ${shipmentId}</h4>`;
+        statusDiv.innerHTML += `<p><strong>Origin:</strong> ${shipment.origin}</p>`;
+        statusDiv.innerHTML += `<p><strong>Destination:</strong> ${shipment.destination}</p>`;
+        statusDiv.innerHTML += '<h4>Status Updates:</h4>';
         shipment.updates.forEach(update => {
             statusDiv.innerHTML += `
                 <div class="status-update">
@@ -495,7 +489,7 @@ function submitRating() {
             transaction.rating = {
                 rating: parseInt(rating),
                 review: review,
-                rater: account
+                rater: connectedAccount
             };
 
             alert("Rating submitted successfully!");
